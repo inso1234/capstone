@@ -1,0 +1,46 @@
+{
+  "name": "EnableMcpTranslatorAccess",
+  "displayName": "Enable MCP Translator Access",
+  "steps": [
+    {
+      "name": "feature",
+      "enable": [
+        "OrchardCore.Apis.GraphQL",
+        "OrchardCore.OpenId.Server",
+        "OrchardCore.OpenId.Validation"
+      ]
+    },
+    {
+      "name": "Roles",
+      "Roles": [
+        {
+          "Name": "McpTranslator",
+          "Description": "Least-privilege service role for the MCP translator",
+          "Permissions": [
+            "AccessContentApi",
+            "ExecuteGraphQL",
+            "ViewOwn_BlogPost",
+            "PublishOwn_BlogPost",
+            "ViewOwn_Page",
+            "PublishOwn_Page"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OpenIdServerSettings",
+      "EnableTokenEndpoint": true,
+      "AllowClientCredentialsFlow": true
+    },
+    {
+      "name": "OpenIdApplication",
+      "ClientId": "mcp-translator",
+      "DisplayName": "MCP Translator Service Client",
+      "Type": "confidential",
+      "ConsentType": "explicit",
+      "ClientSecret": "REPLACE-WITH-A-GENERATED-SECRET",
+      "AllowClientCredentialsFlow": true,
+      "RoleEntries": [{ "Name": "McpTranslator" }]
+    }
+  ]
+}

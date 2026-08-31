@@ -1,0 +1,7 @@
+{
+  "errors": [
+    {
+      "message": "You are not authorized to view content of type 'BlogPost'."
+    }
+  ]
+}

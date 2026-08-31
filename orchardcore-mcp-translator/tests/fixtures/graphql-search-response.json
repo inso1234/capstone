@@ -1,0 +1,16 @@
+{
+  "data": {
+    "blogPost": [
+      {
+        "contentItemId": "item-3",
+        "contentType": "BlogPost",
+        "displayText": "Orchard Search Match",
+        "published": true,
+        "latest": true,
+        "createdUtc": "2026-08-03T00:00:00Z",
+        "modifiedUtc": "2026-08-03T00:00:00Z",
+        "owner": "admin"
+      }
+    ]
+  }
+}

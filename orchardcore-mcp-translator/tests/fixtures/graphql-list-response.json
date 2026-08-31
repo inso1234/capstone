@@ -1,0 +1,26 @@
+{
+  "data": {
+    "blogPost": [
+      {
+        "contentItemId": "item-1",
+        "contentType": "BlogPost",
+        "displayText": "First Post",
+        "published": true,
+        "latest": true,
+        "createdUtc": "2026-08-01T00:00:00Z",
+        "modifiedUtc": "2026-08-01T00:00:00Z",
+        "owner": "admin"
+      },
+      {
+        "contentItemId": "item-2",
+        "contentType": "BlogPost",
+        "displayText": "Second Post",
+        "published": true,
+        "latest": true,
+        "createdUtc": "2026-08-02T00:00:00Z",
+        "modifiedUtc": "2026-08-02T00:00:00Z",
+        "owner": "admin"
+      }
+    ]
+  }
+}
