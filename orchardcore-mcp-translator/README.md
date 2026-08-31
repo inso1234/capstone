@@ -9,9 +9,11 @@ the admin account, never edits or deletes existing content, and never publishes 
 ## Prerequisites
 
 - Node.js >= 18
-- The [Claude Code CLI](https://docs.claude.com/en/docs/claude-code) (`claude`)
 - A running OrchardCore instance, set up per [SETUP-ORCHARDCORE.md](./SETUP-ORCHARDCORE.md)
   (a dedicated `McpTranslator` role + OpenID client, automated via recipe)
+- The [Claude Code CLI](https://docs.claude.com/en/docs/claude-code) (`claude`) — optional.
+  If it isn't on PATH (e.g. a VS Code-extension-only install with no standalone CLI), the
+  installer falls back to writing `.mcp.json` directly (see below).
 
 ## Install (one command)
 
@@ -25,9 +27,17 @@ the admin account, never edits or deletes existing content, and never publishes 
 
 This builds the translator, prompts you to fill in `.env` on first run (or accepts
 `--base-url` / `--client-id` / `--client-secret` / `--content-types` flags for a fully
-non-interactive install), registers it with `claude mcp add --scope local` inside the
-target project, and verifies the registration with `claude mcp list` — no manual JSON
-editing required.
+non-interactive install), and registers the server in the target project — no manual JSON
+editing required either way:
+
+- **If the `claude` CLI is available**, it registers via `claude mcp add --scope local` and
+  verifies with `claude mcp list`.
+- **If it isn't** (`scripts/register-mcp-server.mjs` detects this and falls back
+  automatically), it writes — or merges into an existing — `.mcp.json` in the target
+  project with the same `orchardcore-cms` server entry the CLI would have produced. In that
+  case, (re)start your Claude Code session with the target project open and approve the
+  trust prompt for `.mcp.json` when it appears; there's no `claude mcp list` to check
+  against, so confirm it worked by trying a tool prompt directly (see below).
 
 Works for any project, not just this one — the translator only ever talks to OrchardCore
 over HTTP, never to the filesystem of whatever project Claude Code happens to be running in.

@@ -43,7 +43,9 @@ if [[ "$NODE_MAJOR" -lt 18 ]]; then
   fail "node >=18 is required, found $(node -v)."
 fi
 command -v npm >/dev/null 2>&1 || fail "npm is required but was not found on PATH."
-command -v claude >/dev/null 2>&1 || fail "The Claude Code CLI ('claude') is required but was not found on PATH."
+# The claude CLI is optional, not required — register-mcp-server.mjs falls
+# back to writing .mcp.json directly when it's absent (e.g. VS Code
+# extension-only setups, which don't expose a standalone claude binary).
 
 echo "==> Installing dependencies and building the translator..."
 npm install
@@ -71,20 +73,19 @@ if ! grep -q '^ORCHARDCORE_CLIENT_SECRET=.\+' "$ENV_FILE"; then
 fi
 
 echo "==> Registering the orchardcore-cms MCP server in: $TARGET_DIR"
-(
-  cd "$TARGET_DIR"
-  claude mcp add --transport stdio --scope local orchardcore-cms -- node "$SCRIPT_DIR/dist/server.js"
-)
+node "$SCRIPT_DIR/scripts/register-mcp-server.mjs" "$TARGET_DIR"
 
-echo "==> Verifying registration..."
-(
-  cd "$TARGET_DIR"
-  if claude mcp list | grep -q "orchardcore-cms"; then
-    echo "orchardcore-cms is registered."
-  else
-    fail "orchardcore-cms did not appear in 'claude mcp list' after registration."
-  fi
-)
+if command -v claude >/dev/null 2>&1; then
+  echo "==> Verifying registration..."
+  (
+    cd "$TARGET_DIR"
+    if claude mcp list | grep -q "orchardcore-cms"; then
+      echo "orchardcore-cms is registered."
+    else
+      fail "orchardcore-cms did not appear in 'claude mcp list' after registration."
+    fi
+  )
+fi
 
 cat <<EOF
 

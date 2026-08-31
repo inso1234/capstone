@@ -36,9 +36,9 @@ if ($nodeMajor -lt 18) {
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
     Fail "npm is required but was not found on PATH."
 }
-if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
-    Fail "The Claude Code CLI ('claude') is required but was not found on PATH."
-}
+# The claude CLI is optional, not required — register-mcp-server.mjs falls
+# back to writing .mcp.json directly when it's absent (e.g. VS Code
+# extension-only setups, which don't expose a standalone claude binary).
 
 Write-Host "==> Installing dependencies and building the translator..."
 npm install
@@ -71,21 +71,23 @@ if ($envContent -notmatch 'ORCHARDCORE_CLIENT_SECRET=\S+') {
 }
 
 Write-Host "==> Registering the orchardcore-cms MCP server in: $TargetProjectDir"
-Push-Location $TargetProjectDir
-try {
-    $serverPath = Join-Path $ScriptDir "dist\server.js"
-    claude mcp add --transport stdio --scope local orchardcore-cms -- node "$serverPath"
-    if ($LASTEXITCODE -ne 0) { Fail "claude mcp add failed." }
+$registerScript = Join-Path $ScriptDir "scripts\register-mcp-server.mjs"
+node "$registerScript" "$TargetProjectDir"
+if ($LASTEXITCODE -ne 0) { Fail "MCP server registration failed." }
 
+if (Get-Command claude -ErrorAction SilentlyContinue) {
     Write-Host "==> Verifying registration..."
-    $list = claude mcp list
-    if ($list -match "orchardcore-cms") {
-        Write-Host "orchardcore-cms is registered."
-    } else {
-        Fail "orchardcore-cms did not appear in 'claude mcp list' after registration."
+    Push-Location $TargetProjectDir
+    try {
+        $list = claude mcp list
+        if ($list -match "orchardcore-cms") {
+            Write-Host "orchardcore-cms is registered."
+        } else {
+            Fail "orchardcore-cms did not appear in 'claude mcp list' after registration."
+        }
+    } finally {
+        Pop-Location
     }
-} finally {
-    Pop-Location
 }
 
 Write-Host ""

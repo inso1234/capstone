@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "orchardcore-cms": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:/Users/kavita.batra/OneDrive - Centric Consulting/Documents/Day1/Capstone/orchardcore-mcp-translator/dist/server.js"
+      ]
+    }
+  }
+}
